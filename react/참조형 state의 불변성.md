@@ -1,0 +1,42 @@
+# 참조형 state 
+
+자바스크립트의 자료형은 크게 기본형(Primitive type)과 참조형(Reference type)이 있다는 건 모두가 알고 있을 것이다.
+참조형 데이터인 배열, 객체, 함수는 state는 내부에 있는 값을 변경한다 해도 리렌더링하지 않는다.
+**참조형 state는 값 자체를 가지고 있는 게 아니라, 참조형 state 데이터의 주솟값을 참조하고 있기 때문이다.**
+
+**그렇다면 state가 바뀐 걸 리액트에서 인식하게 하려면 새로운 주솟값을 가진 참조형 데이터를 만들어야 한다.**
+
+그러기 위해 자바스크립트의 얕은 복사가 아닌 **깊은 복사**를 해야 한다. 
+
+깊은 복사의 방법으로는 Spread 연산자, 재귀함수, Lodash의 cloneDeep 라이브러리를 사용하면 된다.
+
+## 잘못된 예시 (객체형 state를 깊은 복사 방법을 사용하지 않은 에시)
+```js
+const [state, setState] = useState({ count: 0 });
+
+const handleAddClick = () => {
+  state.count += 1; // 참조형 변수의 프로퍼티를 수정
+  setState(state); // 참조형이기 때문에 변수의 값(레퍼런스)는 변하지 않음
+}
+```
+
+## 올바른 예시 (Spread 연산자를 통한 깊은 복사를 한 객체형 state)
+```js
+const [state, setState] = useState({ count: 0 });
+
+const handleAddClick = () => {
+  setState({ ...state, count: state.count + 1 }); // 새로운 객체 생성
+}
+```
+
+# 그림으로 보는 얕은 복사와 깊은 복사
+
+## 얕은 복사
+![image](https://github.com/BeMatthewsong/react_basic/assets/98685266/d3b86bc3-8ee5-41de-b639-de98bdc6daa7)
+얕은 복사를 하게 되면 결국은 원본 데이터에 대한 참조가 있기 때문에 데이터의 불변성을 지키지 못할 수 있다.
+
+## 깊은 복사
+![image](https://github.com/BeMatthewsong/react_basic/assets/98685266/aafba21c-d8c7-46ff-b168-82dc0ff5b9b0)
+깊은 복사를 통해 확실하게 데이터를 분리시킴으로써 각 데이터의 불변성을 지킬 수 있다.
+
+이미지 참고 (https://cherish-my-codes.tistory.com/entry/9-%EA%B0%9D%EC%B2%B4-%EB%B3%B5%EC%82%AC-%EB%AC%B8%EC%A0%9C%EC%A0%90)
